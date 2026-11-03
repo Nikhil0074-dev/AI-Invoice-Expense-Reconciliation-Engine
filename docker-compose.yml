@@ -1,0 +1,49 @@
+# docker compose up --build            -> db + api + web (http://localhost:8080)
+# docker compose --profile celery up   -> adds Redis + a Celery OCR worker (set PROCESSING_MODE=celery)
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-invoice}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-invoice}
+      POSTGRES_DB: ${POSTGRES_DB:-invoice}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-invoice}"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-invoice}:${POSTGRES_PASSWORD:-invoice}@db:5432/${POSTGRES_DB:-invoice}
+      STORAGE_DIR: /data/storage
+    volumes: [files:/data]
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8000:8000"]
+
+  web:
+    build: ./frontend
+    depends_on: [api]
+    ports: ["8080:80"]
+
+  redis:
+    image: redis:7-alpine
+    profiles: [celery]
+
+  worker:
+    build: ./backend
+    command: celery -A app.workers.celery_app worker --concurrency=1 --loglevel=INFO
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-invoice}:${POSTGRES_PASSWORD:-invoice}@db:5432/${POSTGRES_DB:-invoice}
+      STORAGE_DIR: /data/storage
+    volumes: [files:/data]
+    depends_on: [db, redis]
+    profiles: [celery]
+
+volumes:
+  pgdata:
+  files:
