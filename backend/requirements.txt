@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+pydantic
+pydantic-settings
+email-validator
+python-multipart
+pyjwt
+pymupdf
+pillow
+pytesseract
+rapidfuzz
+psycopg2-binary
+celery
+redis
