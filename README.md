@@ -69,6 +69,24 @@ Enforced on the server; the UI only hides buttons.
 See [`.env.example`](.env.example): `SECRET_KEY`, `DATABASE_URL`, `STORAGE_DIR`, `MAX_UPLOAD_MB`, `MAX_PAGES`, `OCR_LANGUAGES`
 (e.g. `eng+deu`), `OCR_TIMEOUT_SECONDS`, `PROCESSING_MODE` (`inline|background|celery`), `CORS_ORIGINS`.
 
+## First-use workflow
+
+1. Register a user and workspace in the web application.
+2. Open **Documents** and upload an invoice or receipt.
+3. Open the **Review queue** and compare extracted values with the source preview. Correct uncertain fields and line items.
+4. Verify the invoice. Resolve blocking errors and acknowledge warnings only after reviewing them.
+5. Open **Transactions**, preview a bank CSV, confirm the column mapping and sign convention, then import it.
+6. Open **Reconciliation**, select a verified invoice, inspect each suggestion and its explanation, and explicitly confirm or reject it. Manual allocation is also available.
+7. Review potential duplicate documents in **Duplicates**. Confirming a duplicate archives it without deleting it.
+8. Create a CSV in **Exports**. Only verified invoice data is included in the standard expense and invoice-register exports.
+
+## Roles and permissions
+
+- **Admin:** full organization access, including membership and settings management.
+- **Accountant:** financial workflow access, including verification, reconciliation, duplicate review, imports, and exports; cannot manage organization settings or members.
+- **Contributor:** can upload and process documents and edit invoices, but cannot verify or reconcile them.
+- **Viewer:** read-only access to permitted organization data.
+
 ## Documentation
 [Architecture](docs/architecture.md) · [API](docs/api.md) · [Database](docs/database-schema.md) · [Security](docs/security.md) ·
 [Testing](docs/testing.md) · [**Known limitations**](docs/known-limitations.md)
