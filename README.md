@@ -88,6 +88,8 @@ See [`.env.example`](.env.example): `SECRET_KEY`, `DATABASE_URL`, `STORAGE_DIR`,
 - **Viewer:** read-only access to permitted organization data.
 
 ## Documentation
+
+![Architecture](docs/diagram.png)
 [Architecture](docs/architecture.md) · [API](docs/api.md) · [Database](docs/database-schema.md) · [Security](docs/security.md) ·
 [Testing](docs/testing.md) · [**Known limitations**](docs/known-limitations.md)
 
